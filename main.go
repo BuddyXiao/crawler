@@ -9,16 +9,22 @@ import (
 	"golang.org/x/text/transform"
 	"io/ioutil"
 	"net/http"
+	"regexp"
 )
 
+var headerRe = regexp.MustCompile(`<div class="small_toplink__GmZhY"[\s\S]*?<h2>([\s\S]*?)</h2>`)
+
 func main() {
-	url := "https://www.chinanews.com.cn/"
+	url := "https://www.thepaper.cn/"
 	body, err := Fetch(url)
 	if err != nil {
 		fmt.Println("fetch err:", err)
 		return
 	}
-	fmt.Println(string(body))
+	submatch := headerRe.FindAllSubmatch(body, -1)
+	for _, match := range submatch {
+		fmt.Println(string(match[1]))
+	}
 }
 
 func Fetch(url string) ([]byte, error) {
